@@ -1,0 +1,30 @@
+---
+# your personal settings
+
+base_hostname: openhab
+
+admin_user: pi
+user_home_base: /home
+user_enable_zsh: true
+user_default_shell_theme: agnoster #robbyrussell
+user_default_enabled_plugins: "git gitignore tmux tmuxinator"
+
+influxdb_host: localhost
+influxdb_username: openhab
+influxdb_password: openhab
+influxdb_database_name: openhab
+influxdb_with_grafana: true # false will skip
+
+openhab_share_user: openhab
+openhab_share_password: openhab
+
+cron_default_mailto: root@localhost
+cron_disable_backup: yes # yes/no
+
+pushover:
+  token: ""
+  user: ""
+
+restic_password: ""
+
+authorized_keys: ""

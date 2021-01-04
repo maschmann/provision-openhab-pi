@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# automatically use junk folder als spam source. quite good hits
+for FOLDER in $(find /var/vmail/*/ -name .Junk -type d)
+do
+  sa-learn --spam $FOLDER
+done
+
+# search all missed spam folders
+for FOLDER in $(find /var/vmail/*/ -name 99_Missed_Spam -type d)
+do
+  sa-learn --spam $FOLDER
+done
+
+# search for all ham folders
+for FOLDER in $(find /var/vmail/*/ -name 99_Not_Spam -type d)
+do
+  sa-learn --ham $FOLDER
+done

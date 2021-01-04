@@ -1,0 +1,5 @@
+---
+
+- include: influxdb.yml
+- include: grafana.yml
+  when: influxdb_with_grafana

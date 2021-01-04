@@ -1,0 +1,69 @@
+---
+- name: check custom bash_aliases
+  local_action: stat path="{{playbook_dir}}/user-settings/bash_aliases"
+  become: False
+  register: custom_bash_aliases_file
+
+- name: check custom zsh_aliases
+  local_action: stat path="{{playbook_dir}}/user-settings/zsh_aliases"
+  become: False
+  register: custom_zsh_aliases_file
+
+# copy all files needed for a user to his homediir
+- name: check if oh-my-zsh is already installed
+  stat: path="{{user_home_base}}/{{admin_user}}/.oh-my-zsh"
+  register: oh_my_zsh_dir
+  when: user_enable_zsh == True
+
+- name: Clone oh-my-zsh repo
+  git: repo=https://github.com/robbyrussell/oh-my-zsh.git dest={{user_home_base}}/{{admin_user}}/.oh-my-zsh
+  when:
+    - user_enable_zsh == True
+    - oh_my_zsh_dir.stat.exists == False
+
+- name: ensure oh-my-zsh ownership
+  file: path="{{user_home_base}}/{{admin_user}}/.oh-my-zsh" owner="{{admin_user}}" group="{{admin_user}}" recurse=yes
+  when: user_enable_zsh == True
+
+- name: set zsh shell as default
+  user: name={{admin_user}} shell=/bin/zsh append=yes
+  when: user_enable_zsh == True
+
+- name: set bash shell as default
+  user: name={{admin_user}} shell=/bin/bash append=yes
+  when: user_enable_zsh == False
+
+- name: copy custom bash_aliases if present
+  copy: src={{playbook_dir}}/user-settings/bash_aliases dest={{user_home_base}}/{{admin_user}}/.bash_aliases owner={{admin_user}} group={{admin_user}}
+  when: custom_bash_aliases_file.stat.exists == True
+
+- name: overwrite hosts if custom file is present
+  copy: src={{playbook_dir}}/user-settings/zsh_aliases dest={{user_home_base}}/{{admin_user}}/.zsh_aliases owner={{admin_user}} group={{admin_user}}
+  when: custom_zsh_aliases_file.stat.exists == True
+
+# copy all files needed for a user to his homediir
+- name: create user files
+  template:
+    src: "{{item.path}}"
+    dest: "{{user_home_base}}/{{admin_user}}{{item.dest}}"
+    mode: "{{item.mode}}"
+    owner: "{{admin_user}}"
+    group: "{{admin_user}}"
+  with_items:
+    - { path: '{{playbook_dir}}/user-settings/.gitignore_global.j2', dest: '/.gitignore_global', mode: 644 }
+    - { path: '{{playbook_dir}}/user-settings/.vimrc.j2', dest: '/.vimrc', mode: 644 }
+    - { path: 'authorized_keys.j2', dest: '/.ssh/authorized_keys', mode: 600 }
+    - { path: '{{playbook_dir}}/user-settings/ssh_config.j2', dest: '/.ssh/config', mode: 600 }
+
+# copy all tools and scripts for root user
+- name: copy root user files
+  template: 
+    src: "{{item.path}}"
+    dest: "{{item.dest}}"
+    mode: "{{item.mode}}"
+    owner: "{{item.owner}}"
+    group: "{{item.group}}"
+  with_items:
+    - { path: '../templates/restic-backup.j2', dest: '/root/restic-backup', owner: root, group: root, mode: 770 }
+    - { path: '../templates/notify.j2', dest: '/usr/bin/notify', owner: root, group: root, mode: 755 }
+    - { path: '../templates/pushover.json.j2', dest: '/root/.pushover.json', owner: root, group: root, mode: 640 }

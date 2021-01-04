@@ -1,0 +1,7 @@
+---
+
+influxdb_host: localhost
+influxdb_username: openhab
+influxdb_password: openhab
+influxdb_database_name: openhab
+influxdb_with_grafana: true

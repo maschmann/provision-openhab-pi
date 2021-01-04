@@ -1,0 +1,4 @@
+---
+user_enable_zsh: False
+user_default_shell_theme: agnoster #robbyrussell
+user_default_enabled_plugins: "git gitignore tmux tmuxinator"

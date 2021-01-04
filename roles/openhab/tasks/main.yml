@@ -1,0 +1,4 @@
+---
+
+- include: openhab.yml
+- include: samba.yml

@@ -1,0 +1,60 @@
+---
+
+- name: influxdb | Ensure apt key for influxdb is present
+  apt_key:
+    url: "https://repos.influxdata.com/influxdb.key"
+    state: present
+
+- name: influxdb | Ensure influxdb repo is added
+  apt_repository:
+    repo: "deb https://repos.influxdata.com/debian buster stable"
+    state: present
+
+- name: influxdb | install package
+  apt:
+    name: influxdb
+    state: latest
+
+- name: influxdb | Enable service and start db
+  service:
+    name: influxdb
+    enabled: yes
+    state: started
+
+ # modifying the influxdb.conf is required to be able to use the influxDB API
+- name: influxdb | Enable http
+  lineinfile:
+    path: /etc/influxdb/influxdb.conf
+    regexp: 'Determines whether HTTP endpoint is enabled.'
+    line: '  enabled = true'
+
+- name: influxdb | Enable bind address :8086
+  lineinfile:
+    path: /etc/influxdb/influxdb.conf
+    regexp: '# bind-address = ":8086"'
+    line: '  bind-address = ":8086"'
+
+- name: influxdb | Restart influxdb,
+  systemd:
+    name: influxdb
+    state: restarted
+
+- name: "influxdb | Create {{influxdb_database_name}} database via api"
+  uri:
+    url: "http://localhost:8086/query"
+    method: POST
+    body: 'q=CREATE DATABASE "{{influxdb_database_name}}"'
+    body_format: form-urlencoded
+
+- name: "influxdb | create {{influxdb_username}} user in influxdb"
+  uri:
+    url: "http://localhost:8086/query"
+    method: POST
+    body: "q=CREATE USER {{influxdb_username}} WITH PASSWORD '{{influxdb_password}}'"
+
+- name: "influxdb | Grant all privileges to {{influxdb_username}} user on {{influxdb_database_name}}"
+  uri:
+    url: "http://localhost:8086/query"
+    method: POST
+    body: "q=GRANT ALL ON {{influxdb_database_name}} TO {{influxdb_username}}"
+    body_format: form-urlencoded

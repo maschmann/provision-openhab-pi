@@ -1,0 +1,34 @@
+---
+
+- name: openhab | Ensure openhab key is present
+  apt_key:
+    url: "https://bintray.com/user/downloadSubjectPublicKey?username=openhab"
+    state: present
+
+- name: openhab | Ensure openhab repo is added
+  apt_repository:
+    repo: "deb https://dl.bintray.com/openhab/apt-repo2 stable main"
+    state: present
+
+- name: openhab | Install packages
+  apt:
+    name:
+      - openhab
+      - openhab-addons
+    state: latest
+
+- name: openhab | Ensure configs are in place
+  template:
+    src: "{{item.src}}"
+    dest: "/etc/openhab/{{item.dest}}"
+    owner: openhab
+    group: openhab
+  with_items:
+    - { src: influxdb.persist.j2, dest: persistence/influxdb.persist }
+    - { src: influxdb.cfg.j2, dest: services/influxdb.cfg }
+
+- name: openhab | Enable service and start
+  service:
+    name: openhab
+    enabled: yes
+    state: started

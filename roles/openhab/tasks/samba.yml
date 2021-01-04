@@ -1,0 +1,16 @@
+---
+
+- name: samba | Ensure we have samba installed
+  apt:
+    name:
+      - samba
+      - samba-common-bin
+
+- name: samba | create samba user
+  shell: "(echo {{openhab_share_password}}; echo {{openhab_share_password}}) | smbpasswd -s -a {{openhab_share_user}}"
+
+- name: samba | Ensure all shares are in place
+  template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+  notify: restart samba

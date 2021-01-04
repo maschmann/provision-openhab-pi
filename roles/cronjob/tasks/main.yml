@@ -1,0 +1,15 @@
+---
+- name: define default mail address for cron
+  cron:
+    name: MAILTO
+    env: yes
+    job: "{{cron_default_mailto}}"
+
+- name: add backup job
+  cron:
+    name: "restic backup"
+    minute: "0"
+    hour: "1"
+    job: "/root/restic-backup  > /dev/null 2>&1"
+    disabled: "{{cron_disable_backup}}"
+

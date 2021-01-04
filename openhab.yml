@@ -1,0 +1,26 @@
+---
+- hosts: barkus
+  become: true
+  become_user: root
+
+  pre_tasks:
+    - name: check custom config file
+      local_action: stat path="{{playbook_dir}}/user-settings/settings.yml"
+      become: false
+      register: custom_settings_root
+
+    - name: include custom settings
+      include_vars:
+        file: "{{playbook_dir}}/user-settings/settings.yml"
+      when: custom_settings_root.stat.exists == true
+
+    - name: update apt cache if needed
+      apt: update_cache=yes cache_valid_time=3600
+
+  roles:
+    - { role: base }
+    - { role: admin }
+    - { role: cronjob }
+    - { role: influxdb }
+    - { role: geerlingguy.java, java_packages: [ openjdk-11-jdk ] }
+    - { role: openhab }

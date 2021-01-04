@@ -1,0 +1,49 @@
+#!/bin/bash
+
+LOG="restic-backup.log"
+# Setting this, so the repo does not need to be given on the commandline:
+export RESTIC_REPOSITORY="/mnt/storage-box/backups/towerlord"
+BACKUP_EXCLUDES=/root/restic_exclude
+# BACKUP_PATHS="/etc /root /var /opt /home"
+
+# Setting this, so you won't be asked for your repository passphrase:
+export RESTIC_PASSWORD='{{ restic_password }}'
+
+exec > >(tee -i ${LOG})
+exec 2>&1
+
+echo "###### Starting backup on $(date) ######"
+
+dpkg --get-selections > software.list
+
+#echo "Creating database dumps ..."
+#/bin/bash /root/db-backup
+
+echo "Syncing backup files ..."
+restic --verbose --one-file-system --exclude-caches --exclude-file=$BACKUP_EXCLUDES backup /
+backup_exit=$?
+
+echo "Pruning repository"
+restic forget --prune --keep-daily=7 --keep-weekly=4 --keep-monthly=6
+prune_exit=$?
+
+# use highest exit code as global exit code
+global_exit=$(( backup_exit > prune_exit ? backup_exit : prune_exit ))
+
+if [ ${global_exit} -eq 1 ];
+then
+    notify -m "Backup and/or Prune finished with n warning" -T "server backup: WARNING"
+    info "Backup and/or Prune finished with a warning"
+fi
+
+if [ ${global_exit} -gt 1 ];
+then
+    notify -m "Backup and/or Prune finished with an error" -T "server backup: ERROR" -p 1
+    info "Backup and/or Prune finished with an error"
+fi
+
+echo "###### Finished backup on $(date) ######"
+
+notify -m "Finished backup on $(date)" -T "server backup: SUCCESSFULL"
+
+exit ${global_exit}

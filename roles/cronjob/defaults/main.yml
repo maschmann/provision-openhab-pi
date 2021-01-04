@@ -1,0 +1,4 @@
+---
+
+cron_default_mailto: root@localhost
+cron_disable_backup: yes # yes/no
