@@ -2,3 +2,7 @@
 
 openhab_share_user: openhab
 openhab_share_password: openhab
+openhab_enable_nginx: false
+openhab_local_domain: .openhab.local
+openhab_ssl_cert_privkey: ""
+openhab_ssl_cert_fullchain: ""

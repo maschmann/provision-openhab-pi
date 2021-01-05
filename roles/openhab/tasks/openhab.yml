@@ -32,3 +32,20 @@
     name: openhab
     enabled: yes
     state: started
+
+- name: Check for custom nginx config
+  local_action: stat path="{{playbook_dir}}/user-settings/openhab.conf.j2"
+  become: False
+  register: openhab_custom_nginx_file
+
+- name: Create nginx config with default template
+  template:
+    src: "{{playbook_dir}}/user-settings/openhab.conf.j2.dist"
+    dest: /etc/nginx/sites-available/openhab.conf
+  when: openhab_custom_nginx_file.stat.exists == false
+
+- name: Create nginx config with custom file
+  template:
+    src: "{{playbook_dir}}/user-settings/openhab.conf.j2"
+    dest: /etc/nginx/sites-available/openhab.conf
+  when: openhab_custom_nginx_file.stat.exists

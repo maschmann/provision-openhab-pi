@@ -26,11 +26,19 @@
   when: user_enable_zsh == True
 
 - name: set zsh shell as default
-  user: name={{admin_user}} shell=/bin/zsh append=yes
+  user: name={{admin_user}} shell=/bin/zsh
+  when: user_enable_zsh == True
+
+- name: set zsh shell as default
+  template:
+    src: zshrc.j2
+    dest: .zshrc
+    owner: "{{admin_user}}"
+    group: "{{admin_user}}"
   when: user_enable_zsh == True
 
 - name: set bash shell as default
-  user: name={{admin_user}} shell=/bin/bash append=yes
+  user: name={{admin_user}} shell=/bin/bash
   when: user_enable_zsh == False
 
 - name: copy custom bash_aliases if present
@@ -41,7 +49,7 @@
   copy: src={{playbook_dir}}/user-settings/zsh_aliases dest={{user_home_base}}/{{admin_user}}/.zsh_aliases owner={{admin_user}} group={{admin_user}}
   when: custom_zsh_aliases_file.stat.exists == True
 
-# copy all files needed for a user to his homediir
+# copy all files needed for a user to his homedir
 - name: create user files
   template:
     src: "{{item.path}}"

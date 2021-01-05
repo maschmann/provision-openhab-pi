@@ -45,12 +45,14 @@
     method: POST
     body: 'q=CREATE DATABASE "{{influxdb_database_name}}"'
     body_format: form-urlencoded
+  ignore_errors: yes
 
 - name: "influxdb | create {{influxdb_username}} user in influxdb"
   uri:
     url: "http://localhost:8086/query"
     method: POST
     body: "q=CREATE USER {{influxdb_username}} WITH PASSWORD '{{influxdb_password}}'"
+  ignore_errors: yes
 
 - name: "influxdb | Grant all privileges to {{influxdb_username}} user on {{influxdb_database_name}}"
   uri:
@@ -58,3 +60,4 @@
     method: POST
     body: "q=GRANT ALL ON {{influxdb_database_name}} TO {{influxdb_username}}"
     body_format: form-urlencoded
+  ignore_errors: yes

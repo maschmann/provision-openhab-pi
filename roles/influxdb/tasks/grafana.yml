@@ -20,3 +20,20 @@
     name: grafana-server
     enabled: yes
     state: started
+
+- name: Check for custom nginx config
+  local_action: stat path="{{playbook_dir}}/user-settings/grafana.conf.j2"
+  become: False
+  register: grafana_custom_nginx_file
+
+- name: Create nginx config with default template
+  template:
+    src: "{{playbook_dir}}/user-settings/grafana.conf.j2.dist"
+    dest: /etc/nginx/sites-available/grafana.conf
+  when: grafana_custom_nginx_file.stat.exists == false
+
+- name: Create nginx config with custom file
+  template:
+    src: "{{playbook_dir}}/user-settings/grafana.conf.j2"
+    dest: /etc/nginx/sites-available/grafana.conf
+  when: grafana_custom_nginx_file.stat.exists

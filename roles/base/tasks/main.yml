@@ -15,7 +15,7 @@
   template: src={{item.path}} dest={{item.dest}} mode={{item.mode}} owner={{item.owner}} group={{item.group}}
   with_items:
     - { path: 'hosts.j2', dest: '/etc/hosts', owner: root, group: root, mode: 644 }
-    - { path: 'motd.j2', dest: '/etc/update-motd.d/01-diomedes-logo', owner: root, group: root, mode: 750 }
+    - { path: 'motd.j2', dest: '/etc/update-motd.d/01-openhab-logo', owner: root, group: root, mode: 750 }
 
 - name: Disallow password authentication
   lineinfile: 
@@ -94,12 +94,16 @@
   user:
     name: root
     shell: /bin/zsh
-    append: yes # check - deprecated
+  when: user_enable_zsh == True
+
+- name: set zsh shell as default
+  template:
+    src: zshrc.j2
+    dest: .zshrc
   when: user_enable_zsh == True
 
 - name: set bash shell as default
   user:
     name: root
     shell: /bin/bash
-    append: yes # check - deprecated
   when: user_enable_zsh == False

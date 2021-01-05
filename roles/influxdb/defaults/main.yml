@@ -5,3 +5,7 @@ influxdb_username: openhab
 influxdb_password: openhab
 influxdb_database_name: openhab
 influxdb_with_grafana: true
+influxdb_enable_nginx: false
+influxdb_local_domain: .grafana.local
+influxdb_ssl_cert_privkey: ""
+influxdb_ssl_cert_fullchain: ""

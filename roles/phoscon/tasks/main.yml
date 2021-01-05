@@ -1,0 +1,59 @@
+---
+
+- name: Check for custom nginx config
+  local_action: stat path="{{playbook_dir}}/user-settings/phoscon.conf.j2"
+  become: False
+  register: phoscon_custom_nginx_file
+
+- name: Ensure apt key for phoscon is present
+  apt_key:
+    url: "http://phoscon.de/apt/deconz.pub.key"
+    state: present
+
+- name: Ensure phoscon repo is added
+  apt_repository:
+    repo: "deb http://phoscon.de/apt/deconz buster main"
+    state: present
+
+- name: Ensure package is installed
+  apt:
+    name: deconz
+    state: latest
+
+- name: Add usb user group to pi
+  user:
+    name: pi
+    groups: [ dialout ]
+    append: yes
+
+- name: Enable service and start phoscon
+  service:
+    name: deconz
+    enabled: yes
+    state: started
+
+- name: "Change phoscon port to {{phoscon_port}}"
+  lineinfile: 
+    dest: /lib/systemd/system/deconz.service
+    regexp: "http-port=80"
+    line: "http-port={{phoscon_port}}"
+    state: present
+  when: phoscon_port != 80
+
+- name: Restart phoscon,
+  systemd:
+    name: deconz
+    state: restarted
+  when: phoscon_port != 80
+
+- name: Create nginx config with default template
+  template:
+    src: "{{playbook_dir}}/user-settings/phoscon.conf.j2.dist"
+    dest: /etc/nginx/sites-available/phoscon.conf
+  when: phoscon_custom_nginx_file.stat.exists == false
+
+- name: Create nginx config with custom file
+  template:
+    src: "{{playbook_dir}}/user-settings/phoscon.conf.j2"
+    dest: /etc/nginx/sites-available/phoscon.conf
+  when: phoscon_custom_nginx_file.stat.exists

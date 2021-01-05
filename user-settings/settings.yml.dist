@@ -7,16 +7,33 @@ admin_user: pi
 user_home_base: /home
 user_enable_zsh: true
 user_default_shell_theme: agnoster #robbyrussell
-user_default_enabled_plugins: "git gitignore tmux tmuxinator"
+user_default_enabled_plugins: "git gitignore"
+
+nginx_enable_webserver: false
 
 influxdb_host: localhost
 influxdb_username: openhab
 influxdb_password: openhab
 influxdb_database_name: openhab
 influxdb_with_grafana: true # false will skip
+influxdb_enable_nginx: false
+influxdb_local_domain: .grafana.local
+influxdb_ssl_cert_privkey: ""
+influxdb_ssl_cert_fullchain: ""
 
 openhab_share_user: openhab
 openhab_share_password: openhab
+openhab_enable_nginx: false
+openhab_local_domain: .openhab.local
+openhab_ssl_cert_privkey: ""
+openhab_ssl_cert_fullchain: ""
+
+phoscon_enabled: true
+phoscon_port: 8090
+phoscon_enable_nginx: false
+phoscon_local_domain: .deconz.local
+phoscon_ssl_cert_privkey: "" # optional
+phoscon_ssl_cert_fullchain: "" # optional
 
 cron_default_mailto: root@localhost
 cron_disable_backup: yes # yes/no
