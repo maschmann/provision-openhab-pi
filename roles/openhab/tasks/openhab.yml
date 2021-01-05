@@ -30,7 +30,7 @@
 
 - name: add custom packages for installation, if set
   lineinfile:
-    path: /etc/openhab/addons.cfg
+    path: /etc/openhab/services/addons.cfg
     regexp: "{{item.regexp}}"
     line: "{{item.line}}"
   with_items:
