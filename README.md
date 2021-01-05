@@ -62,6 +62,19 @@ sudo ln -s ../sites-available/grafana.conf
 sudo ln -s ../sites-available/phoscon.conf
 systemctl restart nginx
 ```
+## additional openhab bindings
+
+I'm making use of the openhab services feature, where the ```addons.cfg``` will install the desired bindings, etc.
+It's a bit rough, but the string values of the variables will just be replaced inside the deployed config file.
+
+```yaml
+# user-settings.yml
+openhab_install_bindings: "binding = systeminfo,amazonechocontrol,telegram,exec,shelly,pushover,mqtt,hue,deconz"
+openhab_install_persistence: "persistence = influxdb,rrd4j"
+openhab_install_actions: "action = pushover"
+openhab_install_transformations: "transformation = exec,map,jsonpath"
+openhab_install_misc: "misc = openhabcloud"
+```
 
 ## start deployment
 

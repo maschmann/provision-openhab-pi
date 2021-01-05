@@ -27,6 +27,11 @@ openhab_enable_nginx: false
 openhab_local_domain: .openhab.local
 openhab_ssl_cert_privkey: ""
 openhab_ssl_cert_fullchain: ""
+openhab_install_bindings: "#binding = systeminfo"
+openhab_install_persistence: "#persistence ="
+openhab_install_actions: "#action = pushover"
+openhab_install_transformations: "#transformation = exec"
+openhab_install_misc: "#misc ="
 
 phoscon_enabled: true
 phoscon_port: 8090

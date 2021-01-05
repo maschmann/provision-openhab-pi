@@ -6,3 +6,8 @@ openhab_enable_nginx: false
 openhab_local_domain: .openhab.local
 openhab_ssl_cert_privkey: ""
 openhab_ssl_cert_fullchain: ""
+openhab_install_bindings: "#binding ="
+openhab_install_persistence: "#persistence ="
+openhab_install_actions: "#action ="
+openhab_install_transformations: "#transformation ="
+openhab_install_misc: "#misc ="

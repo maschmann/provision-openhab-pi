@@ -26,6 +26,19 @@
   with_items:
     - { src: influxdb.persist.j2, dest: persistence/influxdb.persist }
     - { src: influxdb.cfg.j2, dest: services/influxdb.cfg }
+    - { src: addons.cfg.j2, dest: services/addons.cfg }
+
+- name: add custom packages for installation, if set
+  lineinfile:
+    path: /etc/openhab/addons.cfg
+    regexp: "{{item.regexp}}"
+    line: "{{item.line}}"
+  with_items:
+    - { regexp: '#binding =', line: "{{openhab_install_bindings}}"}
+    - { regexp: '#persistence =', line: "{{openhab_install_persistence}}"}
+    - { regexp: '#action =', line: "{{openhab_install_actions}}"}
+    - { regexp: '#transformation =', line: "{{openhab_install_transformations}}"}
+    - { regexp: '#misc =', line: "{{openhab_install_misc}}"}
 
 - name: openhab | Enable service and start
   service:
