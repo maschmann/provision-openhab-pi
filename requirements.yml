@@ -1,6 +1,7 @@
 ---
 roles:
   - name: geerlingguy.java
+  - name: geerlingguy.nginx
 
 #collections:
 #  - name: community.general
