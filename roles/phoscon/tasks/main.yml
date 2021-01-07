@@ -26,25 +26,44 @@
     groups: [ dialout ]
     append: yes
 
+- name: Ensure GUI service is disabled, if set
+  service:
+    name: deconz-gui
+    enabled: no
+    state: stopped
+  when: phoscon_gui_disabled
+
 - name: Enable service and start phoscon
   service:
     name: deconz
     enabled: yes
     state: started
 
-- name: "Change phoscon port to {{phoscon_port}}"
-  lineinfile: 
-    dest: /lib/systemd/system/deconz.service
-    regexp: "http-port=80"
-    line: "http-port={{phoscon_port}}"
-    state: present
-  when: phoscon_port != 80
+#- name: "Change phoscon port to {{phoscon_http_port}}"
+#  lineinfile: 
+#    dest: /lib/systemd/system/deconz.service
+#    regexp: "http-port=80"
+#    line: "http-port={{phoscon_http_port}}"
+#    state: present
+#  when: phoscon_http_port != 80
 
-- name: Restart phoscon,
+- name: Ensure override conf dir exists
+  file:
+    path: /etc/systemd/system/deconz.service.d
+    state: directory
+
+- name: Ensure override conf for service exists
+  template:
+    src: override.conf.j2
+    dest: /etc/systemd/system/deconz.service.d/override.conf
+  when: phoscon_http_port != 80
+
+- name: Restart phoscon
   systemd:
     name: deconz
+    daemon_reload: yes
     state: restarted
-  when: phoscon_port != 80
+  when: phoscon_http_port != 80
 
 - name: Create nginx config with default template
   template:

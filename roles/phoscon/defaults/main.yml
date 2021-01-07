@@ -1,8 +1,10 @@
 ---
 
 phoscon_enabled: true
-phoscon_port: 8090  # this is not the default port, but interferes with most default setups
+phoscon_http_port: 8090  # this is not the default port, but interferes with most default setups
+phoscon_ws_port: 8091
 phoscon_enable_nginx: false
 phoscon_local_domain: .deconz.local
 phoscon_ssl_cert_privkey: ""
 phoscon_ssl_cert_fullchain: ""
+phoscon_gui_disabled: true

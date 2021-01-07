@@ -72,6 +72,7 @@
     owner: "{{item.owner}}"
     group: "{{item.group}}"
   with_items:
-    - { path: '../templates/restic-backup.j2', dest: '/root/restic-backup', owner: root, group: root, mode: 770 }
-    - { path: '../templates/notify.j2', dest: '/usr/bin/notify', owner: root, group: root, mode: 755 }
-    - { path: '../templates/pushover.json.j2', dest: '/root/.pushover.json', owner: root, group: root, mode: 640 }
+    - { path: 'restic-backup.j2', dest: '/root/restic-backup', owner: root, group: root, mode: 770 }
+    - { path: 'notify.j2', dest: '/usr/bin/notify', owner: root, group: root, mode: 755 }
+    - { path: 'pushover.json.j2', dest: '/root/.pushover.json', owner: root, group: root, mode: 640 }
+    - { path: 'zshrc.j2', dest: '/root/.zshrc', owner: root, group: root, mode: 770 }

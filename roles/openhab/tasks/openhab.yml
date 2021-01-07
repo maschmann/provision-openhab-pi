@@ -15,6 +15,7 @@
     name:
       - openhab
       - openhab-addons
+      - mosquitto
     state: latest
 
 - name: openhab | Ensure configs are in place
